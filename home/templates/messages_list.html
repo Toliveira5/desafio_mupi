@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensagens</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100 flex flex-col">
+
+<!-- Container central -->
+<div class="flex-1 flex justify-center items-start py-10 px-4">
+
+    <!-- Painel branco principal -->
+    <div class="w-full max-w-4xl bg-gray-50 rounded-3xl shadow-lg p-8">
+
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-8">Mensagens recebidas</h1>
+
+        <!-- Lista de mensagens -->
+        <div class="space-y-4">
+            {% for mensagem in mensagens %}
+                <div class="bg-white border rounded-xl p-5 shadow hover:shadow-lg transition">
+                    <p><strong>Nome:</strong> {{ mensagem.nome }}</p>
+                    <p><strong>Email:</strong> {{ mensagem.email }}</p>
+                    <p><strong>Mensagem:</strong> {{ mensagem.mensagem|truncatechars:80 }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ mensagem.criado_em }}</p>
+
+                    {% if request.user.is_superuser %}
+                        <div class="flex gap-2 mt-3">
+                            <a href="{% url 'message_detail' mensagem.id %}"
+                               class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Ver</a>
+                            <a href="{% url 'message_edit' mensagem.id %}"
+                               class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">Editar</a>
+                            <a href="{% url 'message_delete_confirm' mensagem.id %}"
+                               class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Excluir</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-500 mt-4">Nenhuma mensagem encontrada.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Rodapé do painel -->
+        <div class="flex justify-between mt-8">
+            <a href="{% url 'landpage' %}"
+               class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition">Voltar</a>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">Sair</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
